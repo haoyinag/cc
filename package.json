@@ -1,0 +1,37 @@
+{
+  "name": "cmdsc",
+  "version": "0.1.0",
+  "description": "Cross-shell command center with pnpm and docker shortcuts",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ccc/dcc.git"
+  },
+  "homepage": "https://github.com/ccc/dcc#readme",
+  "engines": {
+    "node": ">=14.17"
+  },
+  "bin": {
+    "cc": "bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "scripts",
+    "docker-shortcuts.sh",
+    "pnpm-shortcuts.sh",
+    "README.md"
+  ],
+  "scripts": {
+    "postinstall": "node scripts/postinstall.js",
+    "preuninstall": "node scripts/preuninstall.js"
+  },
+  "keywords": [
+    "shell",
+    "shortcuts",
+    "pnpm",
+    "docker",
+    "zsh",
+    "bash"
+  ]
+}
