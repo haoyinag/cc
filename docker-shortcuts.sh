@@ -10,6 +10,7 @@
 # Env:
 #   DCPATHS=".:$GITPATH:$WORKPATH:$TVPATH"   # search roots (colon separated)
 #   DC_PRUNE_DIRS=".git:node_modules:dist:build:.venv"  # pruned dirs (colon separated)
+#   DC_MAX_DEPTH=4  # search depth limit
 
 # ---------------- User presets (optional) ----------------
 : "${GITPATH:=/Users/ccc/Documents/GitHub}"
@@ -17,6 +18,7 @@
 : "${TVPATH:=/Users/ccc/Documents/GitHub/DockerProjets/AutoTV}"
 : "${DCPATHS:=.:${GITPATH:-}:${WORKPATH:-}:${TVPATH:-}}"
 : "${DC_PRUNE_DIRS:=.git:node_modules:dist:build:.venv}"
+: "${DC_MAX_DEPTH:=4}"
 
 # ---------------- Helpers ----------------
 _dc_has() { command -v "$1" >/dev/null 2>&1; }
@@ -39,7 +41,7 @@ _dc_scan_root() {
   local root="$1"
   [[ -d "$root" ]] || return 0
   # 直接找 compose 文件，不做 prune，确保能扫到
-  find "$root" -type f \( \
+  find "$root" -maxdepth "$DC_MAX_DEPTH" -type f \( \
       -name 'docker-compose.yml' -o \
       -name 'docker-compose.yaml' -o \
       -name 'compose.yml' -o \
@@ -116,17 +118,19 @@ _dc_resolve_compose_file() {
 
   if (( force_list == 0 )); then
     local here_count
-    here_count=$(find . -type f \( -name 'docker-compose.yml' -o -name 'docker-compose.yaml' -o -name 'compose.yml' -o -name 'compose.yaml' \) -print 2>/dev/null | wc -l | tr -d ' ')
+    here_count=$(find . -maxdepth "$DC_MAX_DEPTH" -type f \( -name 'docker-compose.yml' -o -name 'docker-compose.yaml' -o -name 'compose.yml' -o -name 'compose.yaml' \) -print 2>/dev/null | wc -l | tr -d ' ')
     if (( here_count == 1 )); then
       REPLY="$(_dc_find_compose_file ".")"
       return 0
     fi
   fi
 
+  _dc_log "🔍 正在查找 Docker Compose 项目（<=${DC_MAX_DEPTH} 层）..."
   local candidates; candidates="$(_dc_scan_candidates)"
   if [[ -n "$candidates" ]]; then
     local picked; picked="$(_dc_pick_from_list "$candidates")" || return 130
     REPLY="$(printf '%s' "$picked" | awk -F'\t' '{print $2}')"
+    _dc_log "➡️  使用 compose 文件: $REPLY"
     return 0
   fi
 
@@ -183,3 +187,7 @@ dcr() {
 # convenience
 unalias dc 2>/dev/null || true
 dc() { docker compose "$@"; }
+
+_dc_log() {
+  printf '%s\n' "$*" >&2
+}
