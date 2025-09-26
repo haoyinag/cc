@@ -121,13 +121,17 @@ _dc_resolve_compose_file() {
     here_count=$(find . -maxdepth "$DC_MAX_DEPTH" -type f \( -name 'docker-compose.yml' -o -name 'docker-compose.yaml' -o -name 'compose.yml' -o -name 'compose.yaml' \) -print 2>/dev/null | wc -l | tr -d ' ')
     if (( here_count == 1 )); then
       REPLY="$(_dc_find_compose_file ".")"
+      _dc_log "➡️  使用当前目录的 compose 文件: $REPLY"
       return 0
     fi
   fi
 
   _dc_log "🔍 正在查找 Docker Compose 项目（<=${DC_MAX_DEPTH} 层）..."
+  _dc_log "📁 搜索目录: $(_dc_join_roots)"
   local candidates; candidates="$(_dc_scan_candidates)"
   if [[ -n "$candidates" ]]; then
+    _dc_log "📄 找到候选 compose 文件:" 
+    printf '%s\n' "$candidates" | awk -F'\t' '{print "   • " $2}' >&2
     local picked; picked="$(_dc_pick_from_list "$candidates")" || return 130
     REPLY="$(printf '%s' "$picked" | awk -F'\t' '{print $2}')"
     _dc_log "➡️  使用 compose 文件: $REPLY"
@@ -190,4 +194,22 @@ dc() { docker compose "$@"; }
 
 _dc_log() {
   printf '%s\n' "$*" >&2
+}
+
+_dc_join_roots() {
+  local IFS=':'
+  local root
+  local acc=()
+  if [[ -n "${ZSH_VERSION:-}" ]]; then
+    local -a roots
+    roots=(${(s/:/)DCPATHS})
+    for root in "${roots[@]}"; do
+      [[ -n "$root" ]] && acc+=("$root")
+    done
+  else
+    for root in $DCPATHS; do
+      [[ -n "$root" ]] && acc+=("$root")
+    done
+  fi
+  printf '%s' "${acc[*]:-<无有效目录>}"
 }
