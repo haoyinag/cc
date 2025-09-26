@@ -118,6 +118,7 @@ _dc_resolve_compose_file() {
 
   if (( force_list == 0 )); then
     local here_count
+    _dc_log "🔍 正在当前目录检查 compose（<=${DC_MAX_DEPTH} 层）..."
     here_count=$(find . -maxdepth "$DC_MAX_DEPTH" -type f \( -name 'docker-compose.yml' -o -name 'docker-compose.yaml' -o -name 'compose.yml' -o -name 'compose.yaml' \) -print 2>/dev/null | wc -l | tr -d ' ')
     if (( here_count == 1 )); then
       REPLY="$(_dc_find_compose_file ".")"
@@ -126,7 +127,7 @@ _dc_resolve_compose_file() {
     fi
   fi
 
-  _dc_log "🔍 正在查找 Docker Compose 项目（<=${DC_MAX_DEPTH} 层）..."
+  _dc_log "🔎 正在从预设目录查找 Docker Compose 项目（<=${DC_MAX_DEPTH} 层）..."
   _dc_log "📁 搜索目录: $(_dc_join_roots)"
   local candidates; candidates="$(_dc_scan_candidates)"
   if [[ -n "$candidates" ]]; then

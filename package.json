@@ -1,6 +1,6 @@
 {
   "name": "cmdcc",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Cross-shell command center with pnpm and docker shortcuts",
   "license": "MIT",
   "repository": {
