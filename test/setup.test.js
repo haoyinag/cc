@@ -77,8 +77,56 @@ test('setup.install copies enabled assets and writes rc block', () => {
 });
 
 function createLogger() {
+  const logs = [];
+  const warnings = [];
   return {
-    log() {},
-    warn() {}
+    logs,
+    warnings,
+    log(message) {
+      logs.push(message);
+    },
+    warn(message) {
+      warnings.push(message);
+    }
   };
 }
+
+test('setup.install can recover from invalid config and create backup', () => {
+  const workspace = createTempWorkspace();
+  const { root, configDir, rcFile } = workspace;
+  const logger = createLogger();
+  const manifest = assetRegistry.list();
+
+  try {
+    setup.install({
+      packageRoot: constants.PACKAGE_ROOT,
+      logger,
+      configDir,
+      rcFiles: [rcFile],
+      manifest
+    });
+
+    const configPath = config.getConfigPath(configDir);
+    fs.writeFileSync(configPath, '{ invalid json', 'utf8');
+
+    logger.warnings.length = 0;
+
+    setup.install({
+      packageRoot: constants.PACKAGE_ROOT,
+      logger,
+      configDir,
+      rcFiles: [rcFile],
+      manifest
+    });
+
+    const backupPath = `${configPath}.bak`;
+    assert.ok(fs.existsSync(backupPath));
+    const recovered = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    for (const entry of manifest) {
+      assert.ok(recovered.modules[entry.id]);
+    }
+    assert.ok(logger.warnings.some((msg) => msg.includes('解析失败')));
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});

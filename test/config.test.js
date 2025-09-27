@@ -60,6 +60,20 @@ test('resolveEnabledAssets 仍兼容 legacy enabledAssets 列表', () => {
   assert.strictEqual(logger.warnings.length, 0);
 });
 
+test('normaliseConfig 自动补齐 modules 结构', () => {
+  const cfg = {
+    enabledAssets: ['docker'],
+    shell: {}
+  };
+  const result = config.normaliseConfig(cfg, { manifest });
+  assert.ok(result.mutated);
+  for (const entry of manifest) {
+    assert.ok(cfg.modules[entry.id]);
+    assert.strictEqual(typeof cfg.modules[entry.id].enabled, 'boolean');
+  }
+  assert.deepStrictEqual(cfg.enabledAssets, ['docker']);
+});
+
 test('resolveRcFiles uses overrides with dedupe', () => {
   const configData = { shell: { rcFiles: ['/tmp/.bashrc', '/tmp/.zshrc', '/tmp/.bashrc'] } };
   const rcFiles = config.resolveRcFiles({ config: configData, defaultRcFiles: ['/a', '/b'] });
