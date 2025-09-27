@@ -24,7 +24,8 @@
   ],
   "scripts": {
     "postinstall": "node scripts/postinstall.js",
-    "preuninstall": "node scripts/preuninstall.js"
+    "preuninstall": "node scripts/preuninstall.js",
+    "test": "node scripts/run-tests.js"
   },
   "keywords": [
     "shell",
