@@ -41,7 +41,7 @@
     }
   }
   ```
-- `enabledAssets` 可逐步废弃，改由 `modules.<id>.enabled` 控制；迁移逻辑需兼容旧字段。
+- 以 `modules.<id>.enabled` 作为唯一可信的开关；`enabledAssets` 仅作为向下兼容字段同步维护。
 - `cc config get/set` 将读取/写入对应模块配置。
 
 ## 实施步骤建议

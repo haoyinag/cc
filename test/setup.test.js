@@ -42,13 +42,22 @@ test('setup.install copies enabled assets and writes rc block', () => {
     const configPath = config.getConfigPath(configDir);
     assert.ok(fs.existsSync(configPath));
     const stored = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    assert.ok(stored.modules && typeof stored.modules === 'object');
+    for (const entry of manifest) {
+      assert.ok(stored.modules[entry.id]);
+      assert.strictEqual(typeof stored.modules[entry.id].enabled, 'boolean');
+    }
+
+    // 确保 legacy 字段仍然存在，便于旧版本回退
     assert.ok(Array.isArray(stored.enabledAssets));
 
     const rcContent = fs.readFileSync(rcFile, 'utf8');
     assert.ok(rcContent.includes(setup.constants.MARKER_START));
     assert.ok(rcContent.includes(setup.constants.MARKER_END));
 
-    stored.enabledAssets = [];
+    for (const entry of manifest) {
+      config.setModuleEnabled(stored, entry.id, false, manifest);
+    }
     config.saveConfig(stored, { configDir });
     const summaryAfterDisable = setup.install({
       packageRoot: constants.PACKAGE_ROOT,

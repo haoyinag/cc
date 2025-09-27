@@ -68,19 +68,20 @@ test('enable adds asset id to config and triggers install', () => {
     ctx.args = ['docker'];
 
     const base = config.createDefaultConfig(ctx.manifest);
-    base.enabledAssets = base.enabledAssets.filter((id) => id !== 'docker');
+    config.setModuleEnabled(base, 'docker', false, ctx.manifest);
     config.saveConfig(base, { configDir: tmpDir });
 
     enable.handler(ctx);
 
     const stored = readConfig(tmpDir);
+    assert.ok(stored.modules.docker.enabled);
     assert.ok(stored.enabledAssets.includes('docker'));
     assert.strictEqual(ctx.calls.length, 1);
     assert.strictEqual(ctx.calls[0].configDir, tmpDir);
 
     enable.handler(ctx);
     const storedAgain = readConfig(tmpDir);
-    assert.ok(storedAgain.enabledAssets.includes('docker'));
+    assert.ok(storedAgain.modules.docker.enabled);
     assert.strictEqual(ctx.calls.length, 1);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -99,6 +100,7 @@ test('disable removes asset id from config and triggers reinstall', () => {
     disable.handler(ctx);
 
     const stored = readConfig(tmpDir);
+    assert.ok(!stored.modules.docker.enabled);
     assert.ok(!stored.enabledAssets.includes('docker'));
     assert.strictEqual(ctx.calls.length, 1);
     assert.strictEqual(ctx.calls[0].configDir, tmpDir);

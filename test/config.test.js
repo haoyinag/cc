@@ -26,20 +26,38 @@ test('resolveEnabledAssets defaults to manifest defaults when config missing', (
   assert.strictEqual(logger.warnings.length, 0);
 });
 
-test('resolveEnabledAssets respects explicit empty list', () => {
+test('resolveEnabledAssets读取modules.enabled标记', () => {
+  const logger = createLogger();
+  const configData = {
+    modules: {
+      pnpm: { enabled: false },
+      docker: true
+    }
+  };
+  const enabled = config.resolveEnabledAssets({ manifest, config: configData, logger });
+  assert.deepStrictEqual(enabled.map((asset) => asset.id), ['docker']);
+  assert.strictEqual(logger.warnings.length, 0);
+});
+
+test('resolveEnabledAssets 解析未知模块时给出提示', () => {
+  const logger = createLogger();
+  const configData = {
+    modules: {
+      pnpm: { enabled: true },
+      'unknown-one': true
+    }
+  };
+  const enabled = config.resolveEnabledAssets({ manifest, config: configData, logger });
+  assert.ok(enabled.find((asset) => asset.id === 'pnpm'));
+  assert.ok(logger.warnings[0].includes('unknown-one'));
+});
+
+test('resolveEnabledAssets 仍兼容 legacy enabledAssets 列表', () => {
   const logger = createLogger();
   const configData = { enabledAssets: [], version: 1 };
   const enabled = config.resolveEnabledAssets({ manifest, config: configData, logger });
   assert.strictEqual(enabled.length, 0);
   assert.strictEqual(logger.warnings.length, 0);
-});
-
-test('resolveEnabledAssets warns on unknown ids and ignores them', () => {
-  const logger = createLogger();
-  const configData = { enabledAssets: ['docker', 'unknown-one'], version: 1 };
-  const enabled = config.resolveEnabledAssets({ manifest, config: configData, logger });
-  assert.deepStrictEqual(enabled.map((asset) => asset.id), ['docker']);
-  assert.ok(logger.warnings[0].includes('unknown-one'));
 });
 
 test('resolveRcFiles uses overrides with dedupe', () => {

@@ -23,6 +23,10 @@
   ```json
   {
     "version": 1,
+    "modules": {
+      "pnpm": { "enabled": true },
+      "docker": { "enabled": true }
+    },
     "enabledAssets": ["pnpm", "docker"],
     "shell": {
       "rcFiles": []
@@ -30,8 +34,9 @@
   }
   ```
 - **Resolution Rules**:
-  - Absence of config => assume all `defaultEnabled` assets enabled.
-  - Explicit list overrides defaults; unknown asset IDs ignored with warning.
+  - `modules.<id>.enabled` 是首选控制开关；若未出现则回退到模块默认值。
+  - 为兼容旧版本仍会读取 `enabledAssets` 数组，但写入时同时维护二者。
+  - 缺失配置文件时会生成默认配置；解析失败时会备份原始文件并使用默认值继续运行。
   - Future-proof via `version` field and migration handler in `lib/config.js`.
 - **Runtime Access**: `lib/config.js` exposes `loadConfig(opts)`, `saveConfig(config, opts)`, `resolveEnabledAssets(manifest, config)` utilities.
 - **Overrides**: CLI allows `--config <path>` (future) and internal APIs accept `configDir` to facilitate testing.
@@ -58,4 +63,3 @@
 - 内置 `scripts/run-tests.js` 测试跑器，复用 Node 原生 `assert`。
 - 使用临时目录模拟 HOME/RC 文件，避免污染真实环境。
 - 后续可在 CI 中针对 Node 14/16/18 执行上述脚本。
-
