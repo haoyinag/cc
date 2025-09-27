@@ -9,6 +9,7 @@ function test(name, fn) {
 }
 
 async function run() {
+  const total = registry.length;
   let failures = 0;
   for (const { name, fn } of registry) {
     try {
@@ -25,10 +26,13 @@ async function run() {
   }
 
   if (failures > 0) {
+    console.error(`[DONE] ${total - failures}/${total} tests passed`);
     const error = new Error(`Test run failed with ${failures} error(s)`);
     error.exitCode = 1;
     throw error;
   }
+
+  console.log(`[DONE] ${total}/${total} tests passed`);
 }
 
 module.exports = {

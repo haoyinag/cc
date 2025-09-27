@@ -1,44 +1,19 @@
 # cmdcc
 
-一句 `npm install -g cmdcc`，即可在 zsh / bash / WSL 等 Shell 中启用常用命令别名，并通过 `cc` 命令管理快捷模块。
+cmdcc 可以让你的终端（zsh / bash / WSL 等）立刻拥有一组实用的命令别名。装好 Node.js 后只需一次安装，日常使用几乎不用再操心。
 
-## 快速开始
+## 最快上手 4 步
 
 1. 安装：`npm install -g cmdcc`
-2. 初始化：`cc setup`（postinstall 会自动执行一次；若发现别名缺失可手动重跑）
-3. 查看模块：`cc list`
-4. 重新打开终端或执行 `exec $SHELL`
-5. 尝试命令：`pi`、`rdev`、`dcu`、`dcd` 等
+2. 关闭并重新打开终端（或执行 `exec $SHELL`）
+3. 查看现成的快捷命令：`cc list`
+4. 直接使用，例如 `pi`（= `pnpm install`）、`dcu`（= `docker compose up -d`）
 
-## 内置快捷模块
+> 安装时会自动执行一次 `cc setup`，一般不需要你手动运行。
 
-安装或执行 `cc setup` 后，启用状态的脚本会复制到 `~/.config/cmdcc/` 并自动加载：
+## 日常只记住命令`cc help`
 
-| 模块 ID | 来源文件              | 说明 |
-| ------- | --------------------- | ---- |
-| `pnpm`  | `pnpm-shortcuts.sh`   | 设置 `PNPM_HOME`、补全、`p`/`pi`/`rdev` 等别名 |
-| `docker`| `docker-shortcuts.sh` | `dcu`/`dcd`/`dcr` 及项目扫描、fzf 选择等辅助 |
-
-所有脚本均可自由修改；执行 `cc setup` 会重新复制并同步配置。禁用的模块会被自动清理。
-
-## 配置与管理
-
-- 默认配置保存在 `~/.config/cmdcc/config.json`：
-
-  ```json
-  {
-    "version": 1,
-    "enabledAssets": ["pnpm", "docker"],
-    "shell": {
-      "rcFiles": []
-    }
-  }
-  ```
-
-- `enabledAssets` 为显式启用列表（留空表示全部禁用）；未知 ID 会被忽略并发出警告。
-- `shell.rcFiles` 可覆盖默认写入的 rc 文件列表，支持 zsh/bash 路径混用。
-
-## `cc` 命令速览
+### `cc` 命令速览
 
 ```bash
 cc setup            # 复制启用模块并写入 shell 初始化文件
@@ -52,39 +27,24 @@ cc help [command]   # 查看帮助或单条命令说明
 
 > 支持 `rm` 作为 `remove` 的别名，`install` 作为 `setup` 的别名。
 
-## 安装过程说明
+如果别名失效，重新执行 `cc setup` 即可修复。
 
-执行安装脚本时会：
+## 目前包含的快捷命令包
 
-1. 拷贝已启用模块至 `~/.config/cmdcc/`，并清理禁用模块的旧文件。
-2. 在目标 rc 文件（默认 `~/.zshrc`、`~/.bashrc`、`~/.bash_profile`）末尾追加管理块：
+- **pnpm 包**：`p`、`pi`、`rdev` 等常用别名，自动处理 `PNPM_HOME`
+- **docker 包**：`dcu`、`dcd`、`dcr` 等常用组合，带项目目录扫描（支持 fzf）
 
-   ```sh
-   # >>> cmdcc shortcuts start >>>
-   if [ -d "$HOME/.config/cmdcc" ]; then
-     for __cmdcc_file in "$HOME/.config/cmdcc/"*.sh; do
-       [ -f "$__cmdcc_file" ] && . "$__cmdcc_file"
-     done
-     unset __cmdcc_file
-   fi
-   # <<< cmdcc shortcuts end <<<
-   ```
+更多包将陆续上线，届时会通过更友好的界面让你启用/停用。目前保持默认即可。
 
-   自定义 `configDir` 时，将写入对应绝对路径。
-3. 清理旧版 `cmdsc`/`dcc`/`cmsc` 遗留的注入块与配置目录。
+## 需要更深入？
 
-## 扩展
-
-- 在仓库根目录新增 `.sh` 文件，并在 `lib/assets/registry.js` 中登记模块元数据，即可让 CLI 识别与管理。
-- 更多架构细节与演进计划见 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)。
-- 运行 `node scripts/run-tests.js` 可快速回归核心用例。
+- 进阶设计、路线图和开发笔记都在 `docs/` 目录，仅供有定制需求或想贡献代码的朋友参考。
+- 项目作者可运行 `node scripts/run-tests.js` 进行快速自检。
 
 ## 卸载
 
 ```bash
 npm uninstall -g cmdcc
-# 或
-npm uninstall cmdcc
 ```
 
-卸载会移除 `~/.config/cmdcc/` 与注入块，并清理旧版目录。
+卸载时，cmdcc 会清理掉复制的脚本和在 Shell 中写入的内容。
