@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "cmdcc-console",
+  "version": "0.0.1",
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "devPath": "http://localhost:4576",
+    "distDir": "dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "cmdcc 控制台",
+        "width": 1200,
+        "height": 800
+      }
+    ]
+  }
+}

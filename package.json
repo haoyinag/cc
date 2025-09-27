@@ -25,7 +25,8 @@
   "scripts": {
     "postinstall": "node scripts/postinstall.js",
     "preuninstall": "node scripts/preuninstall.js",
-    "test": "node scripts/run-tests.js"
+    "test": "node scripts/run-tests.js",
+    "daemon": "node packages/daemon/src/server.js"
   },
   "keywords": [
     "shell",
@@ -34,5 +35,9 @@
     "docker",
     "zsh",
     "bash"
-  ]
+  ],
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
 }

@@ -1,0 +1,8 @@
+{
+  "name": "@cmdcc/shared",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "private": true
+}

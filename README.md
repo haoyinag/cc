@@ -40,6 +40,7 @@ cc help [command]   # 查看帮助或单条命令说明
 
 - 进阶设计、路线图和开发笔记都在 `docs/` 目录，仅供有定制需求或想贡献代码的朋友参考。
 - 项目作者可运行 `node scripts/run-tests.js` 进行快速自检。
+- 想体验图形界面？先执行 `npm run daemon` 启动后台服务，再进入 `packages/ui` 运行 `npm install && npm run dev`（首次需要安装依赖），即可在浏览器访问试验版控制台。
 
 ## 卸载
 

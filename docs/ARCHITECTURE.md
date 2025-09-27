@@ -43,7 +43,8 @@
 
 ## CLI Command Model
 - **Registry Driven**: `lib/commands/index.js` exports map of `{ name, aliases, description, handler }`.
-- **Built-in Commands**: `setup`, `remove`, `status`, `help`, `list`, `enable <id>`, `disable <id>`.
+- **Built-in Commands**: `setup`, `remove`, `status`, `help`, `list`, `enable <id>`, `disable <id>`, `daemon`。
+- `daemon` 命令会启动位于 `packages/daemon` 的本地服务，供 Web UI、未来云端节点复用。
 - **Help Generation**: `cc help` renders registry table; unknown command triggers suggestion.
 - **Error Handling**: handlers throw `CliError` with exit codes; CLI centralizes error formatting.
 
@@ -63,3 +64,4 @@
 - 内置 `scripts/run-tests.js` 测试跑器，复用 Node 原生 `assert`。
 - 使用临时目录模拟 HOME/RC 文件，避免污染真实环境。
 - 后续可在 CI 中针对 Node 14/16/18 执行上述脚本。
+- 新增 UI/daemon 相关测试需分别放在 `packages/daemon` 与 `packages/ui`，目前以冒烟测试为主。
