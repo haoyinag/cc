@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { StateResponse, ActionResponse, DoctorResponse } from '@cmdcc/shared';
+import type { ActionResponse, DoctorResponse, LogEntry, StateResponse } from '@shared';
 
 const instance = axios.create({
   baseURL: '/api',
@@ -31,7 +31,7 @@ export const runDoctor = async (): Promise<DoctorResponse> => {
   return data;
 };
 
-export const fetchLogs = async () => {
-  const { data } = await instance.get<{ logs: unknown[] }>('/logs');
+export const fetchLogs = async (): Promise<LogEntry[]> => {
+  const { data } = await instance.get<{ logs: LogEntry[] }>('/logs');
   return data.logs;
 };

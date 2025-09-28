@@ -6,9 +6,9 @@ const os = require('os');
 const path = require('path');
 const fs = require('fs');
 
-const config = require('../../lib/config');
-const setup = require('../../lib/setup');
-const assetRegistry = require('../../lib/assets/registry');
+const config = require('../../../lib/config');
+const setup = require('../../../lib/setup');
+const assetRegistry = require('../../../lib/assets/registry');
 const logger = require('./logger');
 const { buildDoctorReport } = require('./doctor');
 

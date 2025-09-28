@@ -1,2 +1,5 @@
 node_modules
 .history
+packages/ui/dist
+packages/ui/node_modules
+packages/daemon/node_modules

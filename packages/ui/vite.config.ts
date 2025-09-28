@@ -6,7 +6,8 @@ export default defineConfig(() => ({
   plugins: [react()],
   resolve: {
     alias: {
-      '@cmdcc/shared': path.resolve(__dirname, '../shared/src')
+      '@': path.resolve(__dirname, 'src'),
+      '@shared': path.resolve(__dirname, '../shared/src')
     }
   },
   server: {
@@ -15,7 +16,7 @@ export default defineConfig(() => ({
       '/api': {
         target: 'http://localhost:3777',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        rewrite: (pathname) => pathname.replace(/^\/api/, '')
       }
     }
   },

@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const setup = require('../../lib/setup');
+const setup = require('../../../lib/setup');
 
 function checkConfig(configPath) {
   const backupPath = `${configPath}.bak`;

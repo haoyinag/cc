@@ -3,10 +3,10 @@ import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
 import { useQueryClient } from '@tanstack/react-query';
-import { Dashboard } from '../pages/Dashboard';
-import { Modules } from '../pages/Modules';
-import { Logs } from '../pages/Logs';
 import { useMemo, useState } from 'react';
+import { Dashboard } from '@/pages/Dashboard';
+import { Modules } from '@/pages/Modules';
+import { Logs } from '@/pages/Logs';
 
 export const AppLayout = ({ mode, onToggleMode }: { mode: 'light' | 'dark'; onToggleMode: () => void }) => {
   const queryClient = useQueryClient();
@@ -33,7 +33,7 @@ export const AppLayout = ({ mode, onToggleMode }: { mode: 'light' | 'dark'; onTo
           </Typography>
           <IconButton
             aria-label="刷新"
-            onClick={() => queryClient.invalidateQueries()}
+            onClick={() => queryClient.invalidateQueries({ queryKey: ['state'] })}
             color="inherit"
           >
             <RefreshRoundedIcon />
